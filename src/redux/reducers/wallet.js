@@ -12,7 +12,8 @@ const wallet = (state = INITIAL_STATE, action) => {
   case GET_WALLET:
     return {
       ...state,
-      payload,
+      expenses: action.payload,
+      currencies: Object.keys(action.payload),
     };
   default:
     return state;
