@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -39,6 +38,11 @@ class Table extends Component {
     );
   }
 }
+
+Table.propTypes = {
+  expenses: arrayOf(shape()).isRequired,
+};
+
 const mapStateToProps = (state) => ({
   expenses: state.wallet.expenses,
 });

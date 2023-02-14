@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { string } from 'prop-types';
@@ -30,6 +29,7 @@ class Header extends Component {
 
 Header.propTypes = {
   email: string.isRequired,
+  expenses: arrayOf(shape()).isRequired,
 };
 
 const mapStateToProps = (state) => ({
