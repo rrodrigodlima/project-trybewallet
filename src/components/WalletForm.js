@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { string, arrayOf, func } from 'prop-types';
-import { getWallet } from '../redux/actions';
+import { addExpenses, getWallet } from '../redux/actions';
 
 const getCurrency = async () => {
   const API_URL = 'https://economia.awesomeapi.com.br/json/all';
@@ -13,44 +13,96 @@ const getCurrency = async () => {
 };
 
 class WalletForm extends Component {
+  state = {
+    id: 0,
+    value: '',
+    description: '',
+    currency: 'USD',
+    method: 'Dinheiro',
+    tag: 'Alimentação',
+  };
+
   async componentDidMount() {
     const { dispatch } = this.props;
     const currency = await getCurrency();
     dispatch(getWallet(currency));
   }
 
+  clearInput = () => {
+    this.setState({
+      value: '',
+      description: '',
+    });
+  };
+
+  handleChange = ({ target }) => {
+    const { name, value } = target;
+    this.setState({
+      [name]: value,
+    });
+  };
+
+  handleClick = () => {
+    const { id } = this.state;
+    const { dispatch } = this.props;
+    dispatch(addExpenses({ ...this.state }));
+    this.setState({
+      id: id + 1,
+    });
+    this.clearInput();
+  };
+
   render() {
-    const { currencies, expenses } = this.props;
+    const {
+      value,
+      description,
+      currency,
+      method,
+      tag,
+    } = this.state;
+    const { currencies, expense } = this.props;
     return (
       <form name="WalletForm">
 
         <label htmlFor="value">
           Valor:
           <input
-            name="value"
             type="number"
+            name="value"
+            id="value"
             data-testid="value-input"
+            value={ value }
+            onChange={ this.handleChange }
           />
         </label>
 
         <label htmlFor="description">
           Descrição:
           <input
-            name="description"
             type="text"
+            name="description"
+            id="description"
             data-testid="description-input"
+            value={ description }
+            onChange={ this.handleChange }
           />
         </label>
 
         <label htmlFor="currency">
           Moeda:
-          <select name="currency" data-testid="currency-input">
-            {currencies.map((currency, index) => (
+          <select
+            name="currency"
+            id="currency"
+            data-testid="currency-input"
+            value={ currency }
+            onChange={ this.handleChange }
+          >
+            {currencies.map((coin, index) => (
               <option
                 key={ index }
-                value={ expenses[currencies[index]].ask }
+                value={ expense[currencies[index]] }
               >
-                { currency }
+                { coin }
               </option>
             ))}
           </select>
@@ -60,7 +112,10 @@ class WalletForm extends Component {
           Metodo de pagamento:
           <select
             name="method"
+            id="payment-method"
             data-testid="method-input"
+            value={ method }
+            onChange={ this.handleChange }
           >
             <option value="Dinheiro">Dinheiro</option>
             <option value="Cartão de crédito">Cartão de crédito</option>
@@ -72,7 +127,10 @@ class WalletForm extends Component {
           Despesa:
           <select
             name="tag"
+            id="expense-category"
             data-testid="tag-input"
+            value={ tag }
+            onChange={ this.handleChange }
           >
             <option value="Alimentação">Alimentação</option>
             <option value="Lazer">Lazer</option>
@@ -81,14 +139,19 @@ class WalletForm extends Component {
             <option value="Saúde">Saúde</option>
           </select>
         </label>
-
+        <button
+          type="button"
+          onClick={ this.handleClick }
+        >
+          Adicionar despesa
+        </button>
       </form>
     );
   }
 }
 const mapStateToProps = (state) => ({
   currencies: state.wallet.currencies,
-  expenses: state.wallet.expenses,
+  expense: state.wallet.expenses,
 });
 
 WalletForm.propTypes = {
