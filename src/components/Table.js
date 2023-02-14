@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { arrayOf, shape } from 'prop-types';
 
 class Table extends Component {
   render() {

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { string } from 'prop-types';
+import { string, arrayOf, shape } from 'prop-types';
 
 class Header extends Component {
   sumExpenses = () => {
