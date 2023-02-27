@@ -1,6 +1,7 @@
 export const GET_USER = 'GET_USER';
 export const GET_WALLET = 'GET_WALLET';
 export const SUM_EXPENSES = 'SUM_EXPENSE';
+export const DELETE_EXPENSE = 'DELETE_EXPENSE';
 
 export const getUser = (email) => ({
   type: GET_USER,
@@ -37,3 +38,10 @@ export const addExpenses = (expense) => async (dispatch) => {
     },
   });
 };
+
+export function deleteExpense(id) {
+  return {
+    type: DELETE_EXPENSE,
+    payload: id,
+  };
+}

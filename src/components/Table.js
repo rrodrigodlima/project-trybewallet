@@ -1,8 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { arrayOf, shape } from 'prop-types';
+import { arrayOf, shape, func } from 'prop-types';
+import { deleteExpense } from '../redux/actions';
 
 class Table extends Component {
+  handleDelete = (id) => {
+    const { dispatch } = this.props;
+    dispatch(deleteExpense(id));
+  };
+
   render() {
     const tableHeads = ['Descrição', 'Tag', 'Método de pagamento', 'Valor', 'Moeda',
       'Câmbio utilizado', 'Valor convertido', 'Moeda de conversão', 'Editar/Excluir'];
@@ -18,7 +24,7 @@ class Table extends Component {
           </thead>
           <tbody>
             {
-              expenses.map((expense, index) => {
+              expenses.map((expense) => {
                 const { method, tag, currency, exchangeRates } = expense;
                 const ask = Number(exchangeRates[currency].ask);
                 const exchange = Number(ask * expense.value);
@@ -27,8 +33,23 @@ class Table extends Component {
                   toFixed, currency, ask.toFixed(2), exchange.toFixed(2),
                   exchangeRates[currency].name];
                 return (
-                  <tr key={ index }>
+                  <tr key={ expense.id }>
                     {tables.map((table) => (<td key={ table }>{table}</td>))}
+                    <td>
+                      <button
+                        data-testid="edit-btn"
+                        type="button"
+                      >
+                        Editar
+                      </button>
+                      <button
+                        type="button"
+                        data-testid="delete-btn"
+                        onClick={ () => this.handleDelete(expense.id) }
+                      >
+                        Excluir
+                      </button>
+                    </td>
                   </tr>
                 );
               })
@@ -42,6 +63,7 @@ class Table extends Component {
 
 Table.propTypes = {
   expenses: arrayOf(shape()).isRequired,
+  dispatch: func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
